@@ -1,4 +1,3 @@
-export const locationNow = (currentLocation) => {
-  const windowLocation = window.location.pathname;
-  return windowLocation === currentLocation
+export const locationNow = (currentLocation, pathname) => {
+  return pathname === currentLocation;
 };

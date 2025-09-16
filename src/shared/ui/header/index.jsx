@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, Links, useLocation } from 'react-router-dom';
 import cn from 'classnames';
 
 import logo from '@/shared/assets/images/logo.svg';
@@ -7,6 +7,8 @@ import { locationNow } from '@/shared/lib/location-now';
 import styles from './styles.module.css';
 
 export const Header = ({ isMain = false }) => {
+  const { pathname } = useLocation();
+
   return (
     <header className={styles.header}>
       <img src={logo} alt="SkyproWallet" />
@@ -16,8 +18,9 @@ export const Header = ({ isMain = false }) => {
             <ul className={styles.menu__list}>
               <li className={styles.menu__item}>
                 <Link
+                  to={'/expenses'}
                   className={cn(styles.menu__link, {
-                    [styles.active]: locationNow('/expenses'),
+                    [styles.active]: locationNow('/expenses', pathname),
                   })}
                 >
                   Мои расходы
@@ -25,8 +28,9 @@ export const Header = ({ isMain = false }) => {
               </li>
               <li className={styles.menu__item}>
                 <Link
+                  to={'/analysis'}
                   className={cn(styles.menu__link, {
-                    [styles.active]: locationNow('/analysis'),
+                    [styles.active]: locationNow('/analysis', pathname),
                   })}
                 >
                   Анализ Расходов
@@ -36,7 +40,7 @@ export const Header = ({ isMain = false }) => {
           </nav>
 
           <div className={styles.exit}>
-            <p className={styles.exit__text}>Выйти</p>
+            <Link to={"/login"} className={styles.exit__text}>Выйти</Link>
           </div>
         </>
       ) : null}
