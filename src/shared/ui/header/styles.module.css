@@ -23,7 +23,7 @@
     text-decoration: none;
 }
 
-.menu__link:hover {
+.active {
     font-weight: 600;
     border-bottom: 1px solid #7334ea;
     color: #7334ea;
