@@ -11,3 +11,7 @@
 html {
     font-family: "Montserrat", sans-serif;
 }
+
+body {
+    background-color: rgba(244, 245, 246, 1);
+}

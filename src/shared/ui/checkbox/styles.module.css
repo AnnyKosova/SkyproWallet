@@ -1,0 +1,27 @@
+.checkbox {
+    display: none;
+}
+
+.checkbox-label {
+    display: flex;
+    gap: 12px;
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-weight: 400;
+    font-size: 12px;
+    cursor: pointer;
+    background-color: #f4f5f6;
+}
+
+input[type=checkbox].checkbox:checked ~ label.checkbox-label {
+    color: #7334EA;
+    background-color: #F1EBFD;
+}
+
+input[type=checkbox].checkbox ~ label.checkbox-label .category-image {
+    filter: brightness(0)
+}
+
+input[type=checkbox].checkbox:checked ~ label.checkbox-label .category-image {
+    filter: brightness(1)
+}

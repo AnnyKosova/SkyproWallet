@@ -1,0 +1,40 @@
+.form__item {
+    display: flex;
+    flex-direction: column;
+}
+
+.item-label {
+    font-weight: 600;
+    font-size: 16px;
+    padding-bottom: 16px;
+}
+
+.form__input {
+    height: 19px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 0.50px solid #999;
+}
+
+.form__input:focus {
+    outline: none;
+    border-color: #7334ea;
+    background-color: #f1ebfd;
+}
+
+.error,
+.error:focus {
+    outline: none;
+    border-color: #f25050;
+    background-color: #ffebeb;
+}
+
+.error-star::after {
+    content: " *";
+    color: #f25050;
+}
+
+.check-input {
+    display: none;
+}
+

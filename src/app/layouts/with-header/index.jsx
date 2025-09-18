@@ -3,7 +3,7 @@ import { Header } from '@/shared/ui/header';
 
 export const Layout = () => {
   return (
-    <div className="layout">
+    <div>
       <Header isMain={true} />
       <main className="main-content">
         <Outlet />

@@ -1,11 +1,17 @@
 import React from 'react';
 
+import { ExpensesForm } from '@/widgets/expenses-form';
+import { ExpensesTable } from '@/widgets/expenses-table';
+
+import styles from './styles.module.css';
+
 export const ExpensesPage = () => {
   return (
-    <div className="expenses-page">
-      <h2>Мои расходы</h2>
-      <div className="expenses-content">
-        <p>Здесь будет таблица с расходами и модал для добавления новых расходов</p>
+    <div className={styles.expenses__page}>
+      <h1 className={styles.expenses__title}>Мои расходы</h1>
+      <div className={styles.expenses__content}>
+        <ExpensesTable />
+        <ExpensesForm />
       </div>
     </div>
   );
