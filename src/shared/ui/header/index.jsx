@@ -1,5 +1,6 @@
-import { Link, Links, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import cn from 'classnames';
+import { useAuth } from '@/shared/context/AuthContext';
 
 import logo from '@/shared/assets/images/logo.svg';
 import { locationNow } from '@/shared/lib/location-now';
@@ -8,6 +9,17 @@ import styles from './styles.module.css';
 
 export const Header = ({ isMain = false }) => {
   const { pathname } = useLocation();
+  const { logout, user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
   return (
     <header className={styles.header}>
@@ -40,7 +52,13 @@ export const Header = ({ isMain = false }) => {
           </nav>
 
           <div className={styles.exit}>
-            <Link to={"/login"} className={styles.exit__text}>Выйти</Link>
+            <span className={styles.user__email}>{user?.email}</span>
+            <button 
+              onClick={handleLogout}
+              className={styles.exit__text}
+            >
+              Выйти
+            </button>
           </div>
         </>
       ) : null}
