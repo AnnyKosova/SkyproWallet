@@ -13,7 +13,6 @@ class AuthAPI {
     
     const config = {
       headers: {
-        'Content-Type': 'application/json',
         ...options.headers,
       },
       ...options,
@@ -25,50 +24,77 @@ class AuthAPI {
       // Обрабатываем ответ
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        return { error: errorData.error || `HTTP error! status: ${response.status}` };
       }
 
-      return await response.json();
+      const data = await response.json();
+      return { data };
     } catch (error) {
       console.error('API request failed:', error);
-      throw error;
+      return { error: error.message || 'Ошибка сети' };
     }
   }
 
   // Авторизация пользователя
   async login(email, password) {
-    return this.request('/login', {
+    const result = await this.request('/user/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ 
+        login: email,
+        password 
+      }),
     });
+    
+    if (result.error) {
+      return { error: result.error };
+    }
+    
+    return {
+      user: result.data.user,
+      token: result.data.user.token,
+    };
   }
 
   // Регистрация пользователя
   async register(name, email, password) {
-    return this.request('/register', {
+    const result = await this.request('/user', {
       method: 'POST',
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ 
+        name, 
+        login: email,
+        password 
+      }),
     });
+    
+    if (result.error) {
+      return { error: result.error };
+    }
+    
+    return {
+      user: result.data.user,
+      token: result.data.user.token,
+    };
   }
 
   // Проверка токена
   async verifyToken(token) {
-    return this.request('/verify', {
+    const result = await this.request('/user', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
       },
     });
+    
+    if (result.error) {
+      throw new Error(result.error);
+    }
+    
+    return result.data;
   }
 
   // Выход из системы
   async logout(token) {
-    return this.request('/logout', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+    return Promise.resolve();
   }
 }
 

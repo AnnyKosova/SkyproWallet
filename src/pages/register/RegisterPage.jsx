@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/shared/context/AuthContext';
-import { Header } from '@/shared/ui/header';
+import { Header } from '@/shared/ui/header 2';
 import './RegisterPage.css';
 
 export const RegisterPage = () => {
@@ -11,7 +11,9 @@ export const RegisterPage = () => {
     password: '',
   });
   const [errors, setErrors] = useState({});
-  const { register, isAuthenticated, isLoading, error, clearError } = useAuth();
+  const [hasValidationErrors, setHasValidationErrors] = useState(false);
+  const [localFormSubmitted, setLocalFormSubmitted] = useState(false);
+  const { register, isAuthenticated, isLoading, error, clearError, isFormSubmitted, setFormSubmitted } = useAuth();
   const navigate = useNavigate();
 
   // Редирект если уже авторизован
@@ -21,30 +23,29 @@ export const RegisterPage = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  // Очищаем ошибки при изменении полей
+  // Сбрасываем isFormSubmitted только при успешной регистрации
   useEffect(() => {
-    if (error) {
-      clearError();
+    if (isAuthenticated) {
+      setFormSubmitted(false);
+      setLocalFormSubmitted(false);
     }
-  }, [formData, clearError]);
+  }, [isAuthenticated, setFormSubmitted]);
 
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value,
     }));
     
-    // Очищаем ошибку для конкретного поля
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: '',
-      }));
+    clearError();
+    
+    if (localFormSubmitted) {
+      validateForm();
     }
-  };
+  }, [localFormSubmitted, clearError]);
 
-  const validateForm = () => {
+  const validateForm = useCallback(() => {
     const newErrors = {};
 
     if (!formData.name) {
@@ -66,93 +67,141 @@ export const RegisterPage = () => {
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+    const hasErrors = Object.keys(newErrors).length > 0;
+    setHasValidationErrors(hasErrors);
+    return !hasErrors;
+  }, [formData.name, formData.email, formData.password]);
 
-  const handleSubmit = async (e) => {
+  // Обработчик клика по кнопке
+  const handleButtonClick = useCallback(async (e) => {
     e.preventDefault();
+    e.stopPropagation();
     
-    if (!validateForm()) {
+    setFormSubmitted(true);
+    setLocalFormSubmitted(true);
+    
+    const isValid = validateForm();
+    
+    if (!isValid) {
       return;
     }
 
-    try {
-      await register(formData.name, formData.email, formData.password);
-    } catch (err) {
-      console.error('Register error:', err);
+    const success = await register(formData.name, formData.email, formData.password);
+    
+    if (success) {
+      navigate('/expenses');
     }
-  };
+  }, [formData.name, formData.email, formData.password, validateForm, register, navigate, setFormSubmitted]);
+
+  // Показываем ошибки только после попытки отправки
+  const shouldShowError = useCallback((fieldName) => {
+    return localFormSubmitted && errors[fieldName];
+  }, [localFormSubmitted, errors]);
+
+  const shouldShowGlobalError = useCallback(() => {
+    return error || (localFormSubmitted && hasValidationErrors);
+  }, [error, localFormSubmitted, hasValidationErrors]);
+
+  // Показываем ошибки полей при наличии ошибки от API или валидации
+  const shouldShowFieldError = useCallback((fieldName) => {
+    if (fieldName === 'password') {
+      return (localFormSubmitted && errors[fieldName]) || (error && localFormSubmitted);
+    }
+    return localFormSubmitted && errors[fieldName];
+  }, [localFormSubmitted, errors, error]);
+
+  // Определяем, должна ли кнопка быть неактивной
+  const isButtonDisabled = useCallback(() => {
+    const hasValidationErrorsResult = localFormSubmitted && hasValidationErrors;
+    const hasApiError = error && localFormSubmitted;
+    const isLoadingResult = isLoading;
+    
+    return hasValidationErrorsResult || isLoadingResult || hasApiError;
+  }, [localFormSubmitted, hasValidationErrors, isLoading, error]);
 
   return (
-    <div className={`register-page ${error ? 'error' : ''}`}>
+    <div className={`register-page ${error || (localFormSubmitted && hasValidationErrors) ? 'error' : ''}`}>
       <Header />
 
       <div className="register-container">
-        <div className={`register-form-container ${error ? 'error' : ''}`}>
+        <div className={`register-form-container ${error || (localFormSubmitted && hasValidationErrors) ? 'error' : ''}`}>
           <h1 className="register-title">Регистрация</h1>
 
-          <form className="register-form" onSubmit={handleSubmit} noValidate>
+          <div className="register-form">
             <div className="form-group">
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className={`form-input ${errors.name ? 'error' : ''}`}
-                placeholder="Имя"
-                disabled={isLoading}
-              />
-              {errors.name && (
-                <div className="error-message">{errors.name}</div>
-              )}
+              <div className="input-wrapper">
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className={`form-input ${shouldShowFieldError('name') ? 'error' : ''}`}
+                  placeholder="Имя"
+                  disabled={isLoading}
+                />
+                {shouldShowFieldError('name') && (
+                  <span className="error-star">
+                    {formData.name ? ' *' : '*'}
+                  </span>
+                )}
+              </div>
             </div>
 
             <div className="form-group">
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className={`form-input ${errors.email ? 'error' : ''}`}
-                placeholder="Эл. почта"
-                disabled={isLoading}
-              />
-              {errors.email && (
-                <div className="error-message">{errors.email}</div>
-              )}
+              <div className="input-wrapper">
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={`form-input ${shouldShowFieldError('email') ? 'error' : ''}`}
+                  placeholder="Эл. почта"
+                  disabled={isLoading}
+                />
+                {shouldShowFieldError('email') && (
+                  <span className="error-star">
+                    {formData.email ? ' *' : '*'}
+                  </span>
+                )}
+              </div>
             </div>
 
             <div className="form-group">
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className={`form-input ${errors.password ? 'error' : ''}`}
-                placeholder="Пароль"
-                disabled={isLoading}
-              />
-              {errors.password && (
-                <div className="error-message">{errors.password}</div>
-              )}
-              {error && !errors.password && (
+              <div className="input-wrapper">
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className={`form-input ${shouldShowFieldError('password') ? 'error' : ''}`}
+                  placeholder="Пароль"
+                  disabled={isLoading}
+                />
+                {shouldShowFieldError('password') && (
+                  <span className="error-star">
+                    {formData.password ? ' *' : '*'}
+                  </span>
+                )}
+              </div>
+              {shouldShowGlobalError() && (
                 <div className="error-message">
-                  {error}
+                  Упс! Введенные вами данные некорректны. Введите данные корректно и повторите попытку.
                 </div>
               )}
             </div>
 
             <button
-              type="submit"
-              className={`register-button ${isLoading ? 'disabled' : ''}`}
-              disabled={isLoading}
+              type="button"
+              onClick={handleButtonClick}
+              className={`register-button ${isButtonDisabled() ? 'disabled' : ''}`}
+              disabled={isButtonDisabled()}
             >
               {isLoading ? 'Регистрация...' : 'Зарегистрироваться'}
             </button>
-          </form>
+          </div>
 
           <div className="login-link">
             <p>

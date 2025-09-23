@@ -1,49 +1,54 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/shared/context/AuthContext';
 import './LoginPage.css';
-import { Header } from '@/shared/ui/header';
+import { Header } from '@/shared/ui/header 2';
 
 export const LoginPage = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+  const [formData, setFormData] = useState(() => {
+    const saved = localStorage.getItem('loginFormData');
+    return saved ? JSON.parse(saved) : { email: '', password: '' };
   });
   const [errors, setErrors] = useState({});
-  const { login, isAuthenticated, isLoading, error, clearError } = useAuth();
+  const [hasValidationErrors, setHasValidationErrors] = useState(false);
+  const { login, isAuthenticated, isLoading, error, clearError, isFormSubmitted, setFormSubmitted } = useAuth();
   const navigate = useNavigate();
+
+  // Сохраняем данные формы в localStorage при изменении
+  useEffect(() => {
+    localStorage.setItem('loginFormData', JSON.stringify(formData));
+  }, [formData]);
 
   // Редирект если уже авторизован
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/expenses');
+      localStorage.removeItem('loginFormData');
     }
   }, [isAuthenticated, navigate]);
 
-  // Очищаем ошибки при изменении полей
+  // Сбрасываем isFormSubmitted только при успешном входе
   useEffect(() => {
-    if (error) {
-      clearError();
+    if (isAuthenticated) {
+      setFormSubmitted(false);
     }
-  }, [formData, clearError]);
+  }, [isAuthenticated, setFormSubmitted]);
 
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value,
     }));
     
-    // Очищаем ошибку для конкретного поля
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: '',
-      }));
+    clearError();
+    
+    if (isFormSubmitted) {
+      validateForm();
     }
-  };
+  }, [isFormSubmitted, clearError]);
 
-  const validateForm = () => {
+  const validateForm = useCallback(() => {
     const newErrors = {};
 
     if (!formData.email) {
@@ -59,77 +64,120 @@ export const LoginPage = () => {
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+    const hasErrors = Object.keys(newErrors).length > 0;
+    setHasValidationErrors(hasErrors);
+    return !hasErrors;
+  }, [formData.email, formData.password]);
 
-  const handleSubmit = async (e) => {
+  // Обработчик клика по кнопке
+  const handleButtonClick = useCallback(async (e) => {
     e.preventDefault();
+    e.stopPropagation();
     
-    if (!validateForm()) {
+    setFormSubmitted(true);
+    
+    const isValid = validateForm();
+    
+    if (!isValid) {
       return;
     }
 
-    try {
-      await login(formData.email, formData.password);
-    } catch (err) {
-      console.error('Login error:', err);
+    const success = await login(formData.email, formData.password);
+    
+    if (success) {
+      navigate('/expenses');
     }
-  };
+  }, [formData.email, formData.password, validateForm, login, navigate, setFormSubmitted]);
+
+  // Показываем ошибки только после попытки отправки
+  const shouldShowError = useCallback((fieldName) => {
+    return isFormSubmitted && errors[fieldName];
+  }, [isFormSubmitted, errors]);
+
+  const shouldShowGlobalError = useCallback(() => {
+    return error || (isFormSubmitted && hasValidationErrors);
+  }, [error, isFormSubmitted, hasValidationErrors]);
+
+  // Показываем ошибки полей при наличии ошибки от API или валидации
+  const shouldShowFieldError = useCallback((fieldName) => {
+    if (fieldName === 'password') {
+      return (isFormSubmitted && errors[fieldName]) || (error && isFormSubmitted);
+    }
+    return isFormSubmitted && errors[fieldName];
+  }, [isFormSubmitted, errors, error]);
+
+  // Определяем, должна ли кнопка быть неактивной
+  const isButtonDisabled = useCallback(() => {
+    const hasValidationErrorsResult = isFormSubmitted && hasValidationErrors;
+    const hasApiError = error && isFormSubmitted;
+    const isLoadingResult = isLoading;
+    
+    return hasValidationErrorsResult || isLoadingResult || hasApiError;
+  }, [isFormSubmitted, hasValidationErrors, isLoading, error]);
 
   return (
-    <div className={`login-page ${error ? 'error' : ''}`}>
+    <div className={`login-page ${error || (isFormSubmitted && hasValidationErrors) ? 'error' : ''}`}>
       <Header />
 
       <div className="login-container">
-        <div className={`login-form-container ${error ? 'error' : ''}`}>
+        <div className={`login-form-container ${error || (isFormSubmitted && hasValidationErrors) ? 'error' : ''}`}>
           <h1 className="login-title">Вход</h1>
 
-          <form className="login-form" onSubmit={handleSubmit} noValidate>
+          <div className="login-form">
             <div className="form-group">
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className={`form-input ${errors.email ? 'error' : ''}`}
-                placeholder="Эл. почта"
-                disabled={isLoading}
-              />
-              {errors.email && (
-                <div className="error-message">{errors.email}</div>
-              )}
+              <div className="input-wrapper">
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={`form-input ${shouldShowFieldError('email') ? 'error' : ''}`}
+                  placeholder="Эл. почта"
+                  disabled={isLoading}
+                />
+                {shouldShowFieldError('email') && (
+                  <span className="error-star">
+                    {formData.email ? ' *' : '*'}
+                  </span>
+                )}
+              </div>
             </div>
 
             <div className="form-group">
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className={`form-input ${errors.password ? 'error' : ''}`}
-                placeholder="Пароль"
-                disabled={isLoading}
-              />
-              {errors.password && (
-                <div className="error-message">{errors.password}</div>
-              )}
-              {error && !errors.password && (
+              <div className="input-wrapper">
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className={`form-input ${shouldShowFieldError('password') ? 'error' : ''}`}
+                  placeholder="Пароль"
+                  disabled={isLoading}
+                />
+                {shouldShowFieldError('password') && (
+                  <span className="error-star">
+                    {formData.password ? ' *' : '*'}
+                  </span>
+                )}
+              </div>
+              {shouldShowGlobalError() && (
                 <div className="error-message">
-                  {error}
+                  Упс! Введенные вами данные некорректны. Введите данные корректно и повторите попытку.
                 </div>
               )}
             </div>
 
             <button
-              type="submit"
-              className={`login-button ${isLoading ? 'disabled' : ''}`}
-              disabled={isLoading}
+              type="button"
+              onClick={handleButtonClick}
+              className={`login-button ${isButtonDisabled() ? 'disabled' : ''}`}
+              disabled={isButtonDisabled()}
             >
               {isLoading ? 'Вход...' : 'Войти'}
             </button>
-          </form>
+          </div>
 
           <div className="register-link">
             <p>

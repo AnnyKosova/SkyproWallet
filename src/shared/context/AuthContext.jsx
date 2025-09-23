@@ -8,6 +8,7 @@ const initialState = {
   isAuthenticated: false,
   isLoading: false,
   error: null,
+  isFormSubmitted: localStorage.getItem('isFormSubmitted') === 'true' || false,
 };
 
 // Типы действий
@@ -20,6 +21,7 @@ const AUTH_ACTIONS = {
   REGISTER_FAILURE: 'REGISTER_FAILURE',
   LOGOUT: 'LOGOUT',
   CLEAR_ERROR: 'CLEAR_ERROR',
+  SET_FORM_SUBMITTED: 'SET_FORM_SUBMITTED',
 };
 
 // Редьюсер для управления состоянием
@@ -31,6 +33,7 @@ const authReducer = (state, action) => {
         ...state,
         isLoading: true,
         error: null,
+        isFormSubmitted: true,
       };
 
     case AUTH_ACTIONS.LOGIN_SUCCESS:
@@ -42,6 +45,7 @@ const authReducer = (state, action) => {
         user: action.payload.user,
         token: action.payload.token,
         error: null,
+        isFormSubmitted: false,
       };
 
     case AUTH_ACTIONS.LOGIN_FAILURE:
@@ -53,6 +57,7 @@ const authReducer = (state, action) => {
         user: null,
         token: null,
         error: action.payload,
+        isFormSubmitted: true,
       };
 
     case AUTH_ACTIONS.LOGOUT:
@@ -62,12 +67,19 @@ const authReducer = (state, action) => {
         user: null,
         token: null,
         error: null,
+        isFormSubmitted: false,
       };
 
     case AUTH_ACTIONS.CLEAR_ERROR:
       return {
         ...state,
         error: null,
+      };
+
+    case AUTH_ACTIONS.SET_FORM_SUBMITTED:
+      return {
+        ...state,
+        isFormSubmitted: action.payload,
       };
 
     default:
@@ -81,6 +93,11 @@ const AuthContext = createContext();
 // Провайдер контекста
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
+
+  // Сохраняем isFormSubmitted в localStorage при изменении
+  useEffect(() => {
+    localStorage.setItem('isFormSubmitted', state.isFormSubmitted.toString());
+  }, [state.isFormSubmitted]);
 
   // Проверяем токен при загрузке приложения
   useEffect(() => {
@@ -114,36 +131,40 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     dispatch({ type: AUTH_ACTIONS.LOGIN_START });
     
-    try {
-      const data = await authAPI.login(email, password);
-      
-      dispatch({
-        type: AUTH_ACTIONS.LOGIN_SUCCESS,
-        payload: { user: data.user, token: data.token },
-      });
-    } catch (error) {
+    const result = await authAPI.login(email, password);
+    
+    if (result.error) {
       dispatch({
         type: AUTH_ACTIONS.LOGIN_FAILURE,
-        payload: error.message,
+        payload: result.error,
       });
+      return false;
+    } else {
+      dispatch({
+        type: AUTH_ACTIONS.LOGIN_SUCCESS,
+        payload: { user: result.user, token: result.token },
+      });
+      return true;
     }
   };
 
   const register = async (name, email, password) => {
     dispatch({ type: AUTH_ACTIONS.REGISTER_START });
     
-    try {
-      const data = await authAPI.register(name, email, password);
-      
-      dispatch({
-        type: AUTH_ACTIONS.REGISTER_SUCCESS,
-        payload: { user: data.user, token: data.token },
-      });
-    } catch (error) {
+    const result = await authAPI.register(name, email, password);
+    
+    if (result.error) {
       dispatch({
         type: AUTH_ACTIONS.REGISTER_FAILURE,
-        payload: error.message,
+        payload: result.error,
       });
+      return false;
+    } else {
+      dispatch({
+        type: AUTH_ACTIONS.REGISTER_SUCCESS,
+        payload: { user: result.user, token: result.token },
+      });
+      return true;
     }
   };
 
@@ -163,12 +184,17 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: AUTH_ACTIONS.CLEAR_ERROR });
   };
 
+  const setFormSubmitted = (submitted) => {
+    dispatch({ type: AUTH_ACTIONS.SET_FORM_SUBMITTED, payload: submitted });
+  };
+
   const value = {
     ...state,
     login,
     register,
     logout,
     clearError,
+    setFormSubmitted,
   };
 
   return (
