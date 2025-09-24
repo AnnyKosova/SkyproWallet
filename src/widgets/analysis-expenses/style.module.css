@@ -1,0 +1,186 @@
+.expenses_container {
+  padding: 32px 32px 44px 32px;
+  overflow: hidden;
+  flex: 1;
+  /*height: 540px;*/
+  border-radius: 30px;
+  box-shadow: 0px 20px 67px -12px rgba(0, 0, 0, 0.13);
+  background: rgba(255, 255, 255, 1);
+}
+
+.expenses_header {
+display: flex;
+flex-direction: column;
+justify-content: flex-start;
+align-items: flex-start;
+}
+
+.period_display {
+display: flex;
+flex-direction: row;
+align-items: center;
+
+color: rgba(153, 153, 153, 1);
+font-size: 12px;
+font-weight: 400;
+line-height: 100%;
+letter-spacing: 0px;
+text-align: center;
+}
+
+.total_amount {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  text-align: left;
+}
+
+.expenses_chart {
+height: 387px;
+margin-top: 21px;
+/* Автолейаут */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+gap: 32px;
+}
+
+.chart_column {
+display: flex;
+flex-direction: column;
+justify-content: flex-end;
+align-items: center;
+gap: 12px;
+}
+
+.column_container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  position: relative;
+}
+
+.column_amount {
+    color: rgba(0, 0, 0, 1);
+font-size: 16px;
+font-weight: 600;
+line-height: 100%;
+letter-spacing: 0px;
+text-align: center;
+}
+
+.column_bar_container {
+  height: 100%;
+  width: 94px;
+  display: flex;
+  align-items: flex-end;
+  position: relative;
+}
+
+.column_bar {
+  width: 100%;
+  border-radius: 12px;
+  transition: height 0.3s ease;
+  position: relative;
+}
+
+.column_label {
+    color: rgba(0, 0, 0, 1);
+font-size: 12px;
+font-weight: 400;
+line-height: 100%;
+letter-spacing: 0px;
+text-align: center;
+}
+
+.color_food { 
+  background: linear-gradient(to top, #ff6b6b, #ff8e8e); 
+}
+
+.color_transport { 
+  background: linear-gradient(to top, #4ecdc4, #72d8d2); 
+}
+
+.color_housing { 
+  background: linear-gradient(to top, #45b7d1, #6ac6db); 
+}
+
+.color_entertainment { 
+  background: linear-gradient(to top, #f9ca24, #fadc60); 
+}
+
+.color_education { 
+  background: linear-gradient(to top, #6c5ce7, #8a7dec); 
+}
+
+.color_other { 
+  background: linear-gradient(to top, #a29bfe, #b9b4ff); 
+}
+
+.mobile_toggle_button {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 16px;
+  transition: background-color 0.2s;
+}
+
+.mobile_toggle_button:hover {
+  background-color: #1565c0;
+}
+
+@media (min-width: 768px) {
+  .mobile_toggle_button {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .expenses_container {
+    margin-bottom: 16px;
+    padding: 16px;
+  }
+  
+  .expenses_header h2 {
+    font-size: 18px;
+  }
+  
+  .total_amount {
+    font-size: 24px !important;
+  }
+  
+  .expenses_chart {
+    height: 250px;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+  
+  .chart_column {
+    min-width: 60px;
+    width: 60px;
+  }
+  
+  .column_bar {
+    width: 40px !important;
+  }
+  
+  .column_amount {
+    font-size: 10px;
+    margin-bottom: 4px;
+  }
+  
+  .column_label {
+    font-size: 10px;
+    margin-top: 4px;
+  }
+}
