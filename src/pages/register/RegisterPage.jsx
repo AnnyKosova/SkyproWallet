@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/shared/context/AuthContext';
 import { Header } from '@/shared/ui/header 2';
+import { useCallback, useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './RegisterPage.css';
 
 export const RegisterPage = () => {
@@ -13,7 +13,15 @@ export const RegisterPage = () => {
   const [errors, setErrors] = useState({});
   const [hasValidationErrors, setHasValidationErrors] = useState(false);
   const [localFormSubmitted, setLocalFormSubmitted] = useState(false);
-  const { register, isAuthenticated, isLoading, error, clearError, isFormSubmitted, setFormSubmitted } = useAuth();
+  const {
+    register,
+    isAuthenticated,
+    isLoading,
+    error,
+    clearError,
+    isFormSubmitted,
+    setFormSubmitted,
+  } = useAuth();
   const navigate = useNavigate();
 
   // Редирект если уже авторизован
@@ -31,19 +39,22 @@ export const RegisterPage = () => {
     }
   }, [isAuthenticated, setFormSubmitted]);
 
-  const handleChange = useCallback((e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }));
-    
-    clearError();
-    
-    if (localFormSubmitted) {
-      validateForm();
-    }
-  }, [localFormSubmitted, clearError]);
+  const handleChange = useCallback(
+    (e) => {
+      const { name, value } = e.target;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+
+      clearError();
+
+      if (localFormSubmitted) {
+        validateForm();
+      }
+    },
+    [localFormSubmitted, clearError]
+  );
 
   const validateForm = useCallback(() => {
     const newErrors = {};
@@ -73,58 +84,91 @@ export const RegisterPage = () => {
   }, [formData.name, formData.email, formData.password]);
 
   // Обработчик клика по кнопке
-  const handleButtonClick = useCallback(async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    setFormSubmitted(true);
-    setLocalFormSubmitted(true);
-    
-    const isValid = validateForm();
-    
-    if (!isValid) {
-      return;
-    }
+  const handleButtonClick = useCallback(
+    async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
 
-    const success = await register(formData.name, formData.email, formData.password);
-    
-    if (success) {
-      navigate('/expenses');
-    }
-  }, [formData.name, formData.email, formData.password, validateForm, register, navigate, setFormSubmitted]);
+      setFormSubmitted(true);
+      setLocalFormSubmitted(true);
+
+      const isValid = validateForm();
+
+      if (!isValid) {
+        return;
+      }
+
+      const success = await register(
+        formData.name,
+        formData.email,
+        formData.password
+      );
+
+      if (success) {
+        navigate('/expenses');
+      }
+    },
+    [
+      formData.name,
+      formData.email,
+      formData.password,
+      validateForm,
+      register,
+      navigate,
+      setFormSubmitted,
+    ]
+  );
 
   // Показываем ошибки только после попытки отправки
-  const shouldShowError = useCallback((fieldName) => {
-    return localFormSubmitted && errors[fieldName];
-  }, [localFormSubmitted, errors]);
+  const shouldShowError = useCallback(
+    (fieldName) => {
+      return localFormSubmitted && errors[fieldName];
+    },
+    [localFormSubmitted, errors]
+  );
 
   const shouldShowGlobalError = useCallback(() => {
     return error || (localFormSubmitted && hasValidationErrors);
   }, [error, localFormSubmitted, hasValidationErrors]);
 
   // Показываем ошибки полей при наличии ошибки от API или валидации
-  const shouldShowFieldError = useCallback((fieldName) => {
-    if (fieldName === 'password') {
-      return (localFormSubmitted && errors[fieldName]) || (error && localFormSubmitted);
-    }
-    return localFormSubmitted && errors[fieldName];
-  }, [localFormSubmitted, errors, error]);
+  const shouldShowFieldError = useCallback(
+    (fieldName) => {
+      if (fieldName === 'password') {
+        return (
+          (localFormSubmitted && errors[fieldName]) ||
+          (error && localFormSubmitted)
+        );
+      }
+      if (fieldName === 'email') {
+        return (
+          (localFormSubmitted && errors[fieldName]) || error // Подсвечиваем email при ошибке API
+        );
+      }
+      return localFormSubmitted && errors[fieldName];
+    },
+    [localFormSubmitted, errors, error]
+  );
 
   // Определяем, должна ли кнопка быть неактивной
   const isButtonDisabled = useCallback(() => {
     const hasValidationErrorsResult = localFormSubmitted && hasValidationErrors;
     const hasApiError = error && localFormSubmitted;
     const isLoadingResult = isLoading;
-    
-    return hasValidationErrorsResult || isLoadingResult || hasApiError;
+
+    return hasValidationErrorsResult || isLoadingResult || hasApiError || error; // Добавляем error для блокировки кнопки при ошибке API
   }, [localFormSubmitted, hasValidationErrors, isLoading, error]);
 
   return (
-    <div className={`register-page ${error || (localFormSubmitted && hasValidationErrors) ? 'error' : ''}`}>
+    <div
+      className={`register-page ${error || (localFormSubmitted && hasValidationErrors) ? 'error' : ''}`}
+    >
       <Header />
 
       <div className="register-container">
-        <div className={`register-form-container ${error || (localFormSubmitted && hasValidationErrors) ? 'error' : ''}`}>
+        <div
+          className={`register-form-container ${error || (localFormSubmitted && hasValidationErrors) ? 'error' : ''}`}
+        >
           <h1 className="register-title">Регистрация</h1>
 
           <div className="register-form">
@@ -188,7 +232,8 @@ export const RegisterPage = () => {
               </div>
               {shouldShowGlobalError() && (
                 <div className="error-message">
-                  Упс! Введенные вами данные некорректны. Введите данные корректно и повторите попытку.
+                  {error ||
+                    'Упс! Введенные вами данные некорректны. Введите данные корректно и повторите попытку.'}
                 </div>
               )}
             </div>

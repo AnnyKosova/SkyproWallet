@@ -1,5 +1,5 @@
-import { createContext, useContext, useReducer, useEffect } from 'react';
 import authAPI from '@/shared/api/auth';
+import { createContext, useContext, useEffect, useReducer } from 'react';
 
 // Начальное состояние
 const initialState = {
@@ -104,7 +104,8 @@ export const AuthProvider = ({ children }) => {
     const token = localStorage.getItem('token');
     if (token) {
       // Проверяем токен через API
-      authAPI.verifyToken(token)
+      authAPI
+        .verifyToken(token)
         .then((user) => {
           dispatch({
             type: AUTH_ACTIONS.LOGIN_SUCCESS,
@@ -112,8 +113,9 @@ export const AuthProvider = ({ children }) => {
           });
         })
         .catch(() => {
-          // Токен недействителен, удаляем его
+          // Токен недействителен, удаляем его и сбрасываем состояние
           localStorage.removeItem('token');
+          dispatch({ type: AUTH_ACTIONS.LOGOUT });
         });
     }
   }, []);
@@ -130,9 +132,9 @@ export const AuthProvider = ({ children }) => {
   // Функции для работы с авторизацией
   const login = async (email, password) => {
     dispatch({ type: AUTH_ACTIONS.LOGIN_START });
-    
+
     const result = await authAPI.login(email, password);
-    
+
     if (result.error) {
       dispatch({
         type: AUTH_ACTIONS.LOGIN_FAILURE,
@@ -150,9 +152,9 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (name, email, password) => {
     dispatch({ type: AUTH_ACTIONS.REGISTER_START });
-    
+
     const result = await authAPI.register(name, email, password);
-    
+
     if (result.error) {
       dispatch({
         type: AUTH_ACTIONS.REGISTER_FAILURE,
@@ -197,11 +199,7 @@ export const AuthProvider = ({ children }) => {
     setFormSubmitted,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 // Хук для использования контекста
