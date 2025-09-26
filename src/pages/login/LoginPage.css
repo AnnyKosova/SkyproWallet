@@ -1,281 +1,229 @@
 .login-page {
   min-height: 100vh;
+  background: #f4f5f6;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
   background: rgba(244, 245, 246, 1);
 }
 
-/* Контейнер для центрирования формы */
-.login-container {
-  display: flex;
-  justify-content: center;
-  padding-top: calc(207px - 64px);
-}
-
-/* Рамка окна входа */
 .login-form-container {
   width: 379px;
   height: 334px;
   border-radius: 30px;
   box-shadow: 0px 20px 67px -12px rgba(0, 0, 0, 0.13);
   background: rgba(255, 255, 255, 1);
-  padding: 32px 34px 32px 32px;
+  padding: 32px 32px 32px 34px;
+  display: flex;
+  flex-direction: column;
   box-sizing: border-box;
+  transition: height 0.3s ease;
 }
 
-/* Рамка окна входа при ошибке */
 .login-form-container.error {
   height: 382px;
 }
 
-/* Заголовок "Вход" */
 .login-title {
   color: rgba(0, 0, 0, 1);
+  font-family: Montserrat;
   font-size: 24px;
   font-weight: 700;
   line-height: 100%;
   letter-spacing: 0px;
   text-align: center;
-  margin: 0 0 24px 0;
+  margin-bottom: 24px;
 }
 
-/* Форма */
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
 }
 
-/* Группа полей */
 .form-group {
   display: flex;
   flex-direction: column;
+  margin-bottom: 12px;
 }
 
-/* Поля ввода */
-.form-input {
+.form-group:nth-of-type(2) {
+  margin-bottom: 24px;
+}
+
+.input-wrapper {
+  position: relative;
   width: 313px;
+}
+
+.form-input {
+  width: 100%;
   height: 39px;
   box-sizing: border-box;
   border: 0.5px solid rgba(153, 153, 153, 1);
   border-radius: 6px;
-  padding: 0 12px;
+  padding: 10px;
   font-size: 12px;
-  color: rgba(0, 0, 0, 1);
-  background: rgba(255, 255, 255, 1);
-  transition: all 0.2s ease;
+  font-weight: 400;
+  font-family: Montserrat;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+  text-align: left;
 }
 
-/* Состояние при фокусе (вводе) */
 .form-input:focus {
   outline: none;
+  border-color: #667eea;
+}
+
+/* Стили для успешного состояния полей */
+.form-input:not(:placeholder-shown):not(.error) {
   border: 0.5px solid rgba(115, 52, 234, 1);
+  border-radius: 6px;
   background: rgba(241, 235, 253, 1);
+  padding: 10px;
 }
 
-/* Состояние при вводе (когда есть текст) */
-.form-input:not(:placeholder-shown) {
-  border: 0.5px solid rgba(115, 52, 234, 1);
-  background: rgba(241, 235, 253, 1);
-}
-
-/* Состояние ошибки */
-.form-input.error {
-  border: 0.5px solid rgba(242, 80, 80, 1);
-  background: rgba(255, 235, 235, 1);
-}
-
-.form-input.error:focus {
-  border: 0.5px solid rgba(242, 80, 80, 1);
-  background: rgba(255, 235, 235, 1);
-}
-
+/* Стили для placeholder'ов */
 .form-input::placeholder {
   color: rgba(153, 153, 153, 1);
+  font-family: Montserrat;
   font-size: 12px;
   font-weight: 400;
-  line-height: 100%;
+  line-height: 20px;
   letter-spacing: 0px;
+  text-align: left;
 }
 
-/* Сообщение об ошибке */
-.error-message {
-  color: rgba(248, 77, 77, 1);
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 15px;
-  letter-spacing: 0%;
-  text-align: center;
-  margin-top: 12px;
-  margin-bottom: 0;
-}
-
-/* Кнопка "Войти" */
-.login-button {
-  width: 313px;
-  height: 39px;
-  background: rgba(115, 52, 234, 1);
-  border: none;
+/* Стили для полей с ошибками - точно по макету */
+.form-input.error {
+  border: 0.5px solid rgba(242, 80, 80, 1) !important;
   border-radius: 6px;
-  color: rgba(255, 255, 255, 1);
+  background: rgba(255, 235, 235, 1) !important;
+  padding: 10px;
+}
+
+/* Стили для звездочки */
+.error-star {
+  color: rgba(242, 80, 80, 1);
+  font-weight: bold;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Звездочка слева для пустых полей */
+.error-star:not(:has(+ .form-input:not(:placeholder-shown))) {
+  left: 10px;
+}
+
+/* Звездочка справа для заполненных полей */
+.input-wrapper:has(.form-input:not(:placeholder-shown)) .error-star {
+  right: 10px;
+}
+
+.login-button {
+  border-radius: 6px;
+  background: rgba(115, 52, 234, 1);
+  color: white;
+  border: none;
+  padding: 12px 24px;
   font-size: 12px;
   font-weight: 600;
-  line-height: 100%;
-  letter-spacing: 0px;
-  text-align: center;
   cursor: pointer;
-  margin-top: 12px;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
+  width: 313px;
+  height: 48px;
 }
 
 .login-button:hover:not(.disabled) {
-  background: rgba(100, 45, 200, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
 }
 
-/* Состояние кнопки при ошибке */
+/* Стиль неактивной кнопки - точно по макету */
 .login-button.disabled {
-  background: rgba(153, 153, 153, 1);
+  background: rgba(153, 153, 153, 1) !important;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
-/* Ссылка на регистрацию */
 .register-link {
-  margin-top: 24px;
   text-align: center;
+  margin-top: 24px;
 }
 
 .register-link p {
   color: rgba(153, 153, 153, 1);
+  font-family: Montserrat;
   font-size: 12px;
   font-weight: 400;
   line-height: 15px;
   letter-spacing: 0px;
+  text-align: center;
   margin: 0;
 }
 
 .register-link-text {
   color: rgba(153, 153, 153, 1);
-  text-decoration: underline;
+  font-family: Montserrat;
   font-size: 12px;
   font-weight: 400;
   line-height: 15px;
   letter-spacing: 0px;
-  display: block;
+  text-align: center;
+  text-decoration: underline;
   margin-top: 4px;
+  display: block;
 }
 
 .register-link-text:hover {
-  color: rgba(115, 52, 234, 1);
+  text-decoration: underline;
+}
+
+.error-message {
+  color: rgba(248, 77, 77, 1);
+  font-family: Montserrat;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 15px;
+  margin-top: 8px;
+  text-align: center;
+  max-width: 313px;
+  width: 100%;
 }
 
 /* Мобильная версия */
 @media (max-width: 768px) {
-  .login-page {
-    background: rgba(255, 255, 255, 1);
-  }
-  
-  .login-header {
-    height: 64px;
-    background: rgba(244, 245, 246, 1);
-    padding-left: 16px;
-  }
-  
   .login-container {
-    padding: 0;
-    padding-top: 151px;
-    padding-left: 16px;
-    padding-right: 16px;
+    background: rgba(255, 255, 255, 1);
   }
   
   .login-form-container {
-    width: 100%;
-    max-width: 343px;
-    height: auto;
-    border-radius: 0;
     box-shadow: none;
-    background: transparent;
-    padding: 0;
-    margin: 0 auto;
-  }
-  
-  .login-form-container.error {
-    height: auto;
-  }
-  
-  .login-title {
-    color: rgba(0, 0, 0, 1);
-    font-size: 24px;
-    font-weight: 700;
-    line-height: 100%;
-    letter-spacing: 0px;
-    text-align: center;
-    margin: 0 0 24px 0;
-  }
-  
-  .login-form {
-    gap: 12px;
   }
   
   .form-input {
-    width: 343px;
-    height: 39px;
-    border: 0.5px solid rgba(153, 153, 153, 1);
-    border-radius: 6px;
-    padding: 0 12px;
     font-size: 12px;
-    color: rgba(0, 0, 0, 1);
-    background: rgba(255, 255, 255, 1);
+    font-weight: 400;
+    font-family: Montserrat;
   }
   
   .form-input::placeholder {
     color: rgba(153, 153, 153, 1);
+    font-family: Montserrat;
     font-size: 12px;
     font-weight: 400;
     line-height: 100%;
     letter-spacing: 0px;
     text-align: left;
-  }
-  
-  .login-button {
-    width: 343px;
-    height: 39px;
-    background: rgba(115, 52, 234, 1);
-    border: none;
-    border-radius: 6px;
-    color: rgba(255, 255, 255, 1);
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 100%;
-    letter-spacing: 0px;
-    text-align: center;
-    margin-top: 24px;
-  }
-  
-  .register-link {
-    margin-top: 24px;
-    text-align: center;
-  }
-  
-  .register-link p {
-    color: rgba(153, 153, 153, 1);
-    font-size: 12px;
-    font-weight: 400;
-    line-height: 15px;
-    letter-spacing: 0px;
-    margin: 0;
-  }
-  
-  .register-link-text {
-    color: rgba(153, 153, 153, 1);
-    text-decoration: underline;
-    font-size: 12px;
-    font-weight: 400;
-    line-height: 15px;
-    letter-spacing: 0px;
-    display: block;
-    margin-top: 4px;
-  }
-  
-  /* Мобильная версия при ошибке */
-  .login-page.error .login-container {
-    padding-top: 127px;
   }
 }

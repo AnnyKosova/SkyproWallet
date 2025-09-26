@@ -1,25 +1,71 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from 'react-router-dom';
-import { Layout } from '../layouts';
+import { AnalysisPage } from '@/pages/analysis/AnalysisPage';
+import { ExpensesPage } from '@/pages/expenses/ExpensesPage';
 import { LoginPage } from '@/pages/login/LoginPage';
 import { RegisterPage } from '@/pages/register/RegisterPage';
-import { ExpensesPage } from '@/pages/expenses/ExpensesPage';
-import { AnalysisPage } from '@/pages/analysis/AnalysisPage';
+import { useAuth } from '@/shared/context/AuthContext';
+import {
+  Navigate,
+  Route,
+  BrowserRouter as Router,
+  Routes,
+} from 'react-router-dom';
+import { Layout } from '../layouts';
+
+// Компонент для защищенных маршрутов
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  // Показываем загрузку только при инициализации приложения
+  if (isLoading && !isAuthenticated) {
+    return <div>Загрузка...</div>;
+  }
+
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
+};
+
+// Компонент для публичных маршрутов (только для неавторизованных)
+const PublicRoute = ({ children }) => {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  // Показываем загрузку только при инициализации приложения
+  if (isLoading && !isAuthenticated) {
+    return <div>Загрузка...</div>;
+  }
+
+  return !isAuthenticated ? children : <Navigate to="/expenses" replace />;
+};
 
 export function AppRouter() {
   return (
     <Router>
       <Routes>
-        {/* Страницы без Header */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        {/* Публичные страницы (только для неавторизованных) */}
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <LoginPage />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <PublicRoute>
+              <RegisterPage />
+            </PublicRoute>
+          }
+        />
 
-        {/* Страницы с Header */}
-        <Route path="/" element={<Layout />}>
+        {/* Защищенные страницы (только для авторизованных) */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<Navigate to="/expenses" replace />} />
           <Route path="expenses" element={<ExpensesPage />} />
           <Route path="analysis" element={<AnalysisPage />} />
