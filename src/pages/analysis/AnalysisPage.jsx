@@ -1,8 +1,7 @@
+// AnalysisPage.jsx
 import React, { useState, useCallback } from 'react';
-
 import { AnalysisCalendar } from '@/widgets/analysis-calendar';
 import { AnalysisExpenses } from '@/widgets/analysis-expenses';
-
 import styles from './styles.module.css';
 
 export const AnalysisPage = () => {
