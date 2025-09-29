@@ -15,8 +15,8 @@ import { Layout } from '../layouts';
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
 
-  // Показываем загрузку только при инициализации приложения
-  if (isLoading && !isAuthenticated) {
+  // Показываем загрузку только когда проверяем токен
+  if (isLoading) {
     return <div>Загрузка...</div>;
   }
 
@@ -27,8 +27,8 @@ const ProtectedRoute = ({ children }) => {
 const PublicRoute = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
 
-  // Показываем загрузку только при инициализации приложения
-  if (isLoading && !isAuthenticated) {
+  // Показываем загрузку только когда проверяем токен
+  if (isLoading) {
     return <div>Загрузка...</div>;
   }
 

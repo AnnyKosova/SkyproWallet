@@ -52,7 +52,7 @@ export const Header = ({ isMain = false }) => {
           </nav>
 
           <div className={styles.exit}>
-            <span className={styles.user__email}>{user?.email}</span>
+            
             <button 
               onClick={handleLogout}
               className={styles.exit__text}
