@@ -28,5 +28,7 @@ export const AnalysisPage = () => {
         />
       </div>
     </div>
+
+    
   );
 };
