@@ -103,6 +103,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
+      // Проверяем токен через API
       authAPI
         .verifyToken(token)
         .then((user) => {
@@ -112,6 +113,7 @@ export const AuthProvider = ({ children }) => {
           });
         })
         .catch(() => {
+          // Токен недействителен, удаляем его и сбрасываем состояние
           localStorage.removeItem('token');
           dispatch({ type: AUTH_ACTIONS.LOGOUT });
         });
@@ -127,22 +129,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, [state.token]);
 
-  // Функция для обработки успешной аутентификации
-  const handleAuthSuccess = (user, token) => {
-    dispatch({
-      type: AUTH_ACTIONS.LOGIN_SUCCESS,
-      payload: { user, token },
-    });
-  };
-
-  // Функция для обработки ошибки аутентификации
-  const handleAuthError = (error) => {
-    dispatch({
-      type: AUTH_ACTIONS.LOGIN_FAILURE,
-      payload: error,
-    });
-  };
-
   // Функции для работы с авторизацией
   const login = async (email, password) => {
     dispatch({ type: AUTH_ACTIONS.LOGIN_START });
@@ -150,10 +136,16 @@ export const AuthProvider = ({ children }) => {
     const result = await authAPI.login(email, password);
 
     if (result.error) {
-      handleAuthError(result.error);
+      dispatch({
+        type: AUTH_ACTIONS.LOGIN_FAILURE,
+        payload: result.error,
+      });
       return false;
     } else {
-      handleAuthSuccess(result.user, result.token);
+      dispatch({
+        type: AUTH_ACTIONS.LOGIN_SUCCESS,
+        payload: { user: result.user, token: result.token },
+      });
       return true;
     }
   };

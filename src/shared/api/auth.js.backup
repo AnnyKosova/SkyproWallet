@@ -21,6 +21,7 @@ class AuthAPI {
     try {
       const response = await fetch(url, config);
 
+      // Обрабатываем ответ
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         return {
@@ -93,6 +94,7 @@ class AuthAPI {
     // Если API возвращает объект с массивом users, берем первого пользователя
     if (result.data && result.data.users && Array.isArray(result.data.users)) {
       const user = result.data.users[0];
+      // Проверяем, что пользователь действительно авторизован
       if (!user || !user._id) {
         throw new Error('Invalid token');
       }
