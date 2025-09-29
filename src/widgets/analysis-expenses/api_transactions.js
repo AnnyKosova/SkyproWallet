@@ -29,7 +29,6 @@ export class TransactionsAPI {
       const response = await fetch(`${API_BASE_URL}/period`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${this.token}`
         },
         body: JSON.stringify(requestBody)
@@ -60,7 +59,6 @@ export class TransactionsAPI {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${this.token}`,
-          'Content-Type': 'application/json'
         }
       });
 
@@ -103,7 +101,6 @@ export class TransactionsAPI {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${this.token}`,
-          'Content-Type': 'application/json'
         }
       });
 
