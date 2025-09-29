@@ -1,6 +1,7 @@
 // api_transactions.js
 const API_BASE_URL = 'https://wedev-api.sky.pro/api/transactions';
 
+
 export class TransactionsAPI {
   constructor(token) {
     this.token = token;
