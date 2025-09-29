@@ -1,11 +1,13 @@
-import authAPI from '@/shared/api/auth';
+import { authAPI } from '@/shared/api/auth';
 import { createContext, useContext, useEffect, useReducer } from 'react';
 
 // Начальное состояние
 const initialState = {
+  // DEBUG: localStorage token = localStorage.getItem('token');
+  // DEBUG: isAuthenticated will be = !!localStorage.getItem('token');
   user: null,
   token: localStorage.getItem('token') || null,
-  isAuthenticated: false,
+  isAuthenticated: !!localStorage.getItem('token'), // ✅ Исправлено! // DEBUG: localStorage token = '${localStorage.getItem('token')}'
   isLoading: false,
   error: null,
   isFormSubmitted: localStorage.getItem('isFormSubmitted') === 'true' || false,
@@ -103,7 +105,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      // Проверяем токен через API
+      dispatch({ type: AUTH_ACTIONS.LOGIN_START }); // ✅ Добавляем состояние загрузки
       authAPI
         .verifyToken(token)
         .then((user) => {
@@ -112,8 +114,8 @@ export const AuthProvider = ({ children }) => {
             payload: { user, token },
           });
         })
-        .catch(() => {
-          // Токен недействителен, удаляем его и сбрасываем состояние
+        .catch((error) => {
+          // console.log("DEBUG: Token verification failed:", error);
           localStorage.removeItem('token');
           dispatch({ type: AUTH_ACTIONS.LOGOUT });
         });
@@ -129,6 +131,22 @@ export const AuthProvider = ({ children }) => {
     }
   }, [state.token]);
 
+  // Функция для обработки успешной аутентификации
+  const handleAuthSuccess = (user, token) => {
+    dispatch({
+      type: AUTH_ACTIONS.LOGIN_SUCCESS,
+      payload: { user, token },
+    });
+  };
+
+  // Функция для обработки ошибки аутентификации
+  const handleAuthError = (error) => {
+    dispatch({
+      type: AUTH_ACTIONS.LOGIN_FAILURE,
+      payload: error,
+    });
+  };
+
   // Функции для работы с авторизацией
   const login = async (email, password) => {
     dispatch({ type: AUTH_ACTIONS.LOGIN_START });
@@ -136,16 +154,10 @@ export const AuthProvider = ({ children }) => {
     const result = await authAPI.login(email, password);
 
     if (result.error) {
-      dispatch({
-        type: AUTH_ACTIONS.LOGIN_FAILURE,
-        payload: result.error,
-      });
+      handleAuthError(result.error);
       return false;
     } else {
-      dispatch({
-        type: AUTH_ACTIONS.LOGIN_SUCCESS,
-        payload: { user: result.user, token: result.token },
-      });
+      handleAuthSuccess(result.user, result.token);
       return true;
     }
   };
