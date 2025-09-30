@@ -11,4 +11,54 @@
 .expenses__content {
     display: flex;
     gap: 34px;
+    position: relative;
+}
+
+/* Стили для мобильной адаптации */
+@media (max-width: 767px) {
+    .expenses__title {
+        display: none;
+    }
+    .expenses__page {
+        background: rgba(255, 255, 255, 1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .expenses__content {
+        flex-direction: column;
+        gap: 0;
+        align-items: center;
+    }
+    
+    .calendar_container,
+    .expenses_container {
+        transition: all 0.3s ease;
+
+    }
+    
+    .calendar_container.active,
+    .expenses_container.active {
+        display: block;
+    }
+    
+    .calendar_container.hidden,
+    .expenses_container.hidden {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) {
+    .calendar_container,
+    .expenses_container {
+        display: block !important;
+    }
+    
+    .calendar_container {
+        width: 379px;
+    }
+    
+    .expenses_container {
+        flex: 1;
+    }
 }
