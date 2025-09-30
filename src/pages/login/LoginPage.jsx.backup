@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/shared/context/AuthContext';
-import { validateLoginForm } from '@/shared/utils/validation';
-import { shouldShowFieldError, shouldShowGlobalError, isButtonDisabled } from '@/shared/utils/formHelpers';
 import './LoginPage.css';
 import { Header } from '@/shared/ui/header 2';
 
@@ -51,11 +49,25 @@ export const LoginPage = () => {
   }, [isFormSubmitted, clearError]);
 
   const validateForm = useCallback(() => {
-    const { errors: newErrors, hasErrors } = validateLoginForm(formData);
+    const newErrors = {};
+
+    if (!formData.email) {
+      newErrors.email = 'Введите email';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Введите корректный email';
+    }
+
+    if (!formData.password) {
+      newErrors.password = 'Введите пароль';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Пароль должен содержать минимум 6 символов';
+    }
+
     setErrors(newErrors);
+    const hasErrors = Object.keys(newErrors).length > 0;
     setHasValidationErrors(hasErrors);
     return !hasErrors;
-  }, [formData]);
+  }, [formData.email, formData.password]);
 
   // Обработчик клика по кнопке
   const handleButtonClick = useCallback(async (e) => {
@@ -77,6 +89,32 @@ export const LoginPage = () => {
     }
   }, [formData.email, formData.password, validateForm, login, navigate, setFormSubmitted]);
 
+  // Показываем ошибки только после попытки отправки
+  const shouldShowError = useCallback((fieldName) => {
+    return isFormSubmitted && errors[fieldName];
+  }, [isFormSubmitted, errors]);
+
+  const shouldShowGlobalError = useCallback(() => {
+    return error || (isFormSubmitted && hasValidationErrors);
+  }, [error, isFormSubmitted, hasValidationErrors]);
+
+  // Показываем ошибки полей при наличии ошибки от API или валидации
+  const shouldShowFieldError = useCallback((fieldName) => {
+    if (fieldName === 'password') {
+      return (isFormSubmitted && errors[fieldName]) || (error && isFormSubmitted);
+    }
+    return isFormSubmitted && errors[fieldName];
+  }, [isFormSubmitted, errors, error]);
+
+  // Определяем, должна ли кнопка быть неактивной
+  const isButtonDisabled = useCallback(() => {
+    const hasValidationErrorsResult = isFormSubmitted && hasValidationErrors;
+    const hasApiError = error && isFormSubmitted;
+    const isLoadingResult = isLoading;
+    
+    return hasValidationErrorsResult || isLoadingResult || hasApiError;
+  }, [isFormSubmitted, hasValidationErrors, isLoading, error]);
+
   return (
     <div className={`login-page ${error || (isFormSubmitted && hasValidationErrors) ? 'error' : ''}`}>
       <Header />
@@ -94,11 +132,11 @@ export const LoginPage = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`form-input ${shouldShowFieldError('email', isFormSubmitted, errors, error) ? 'error' : ''}`}
+                  className={`form-input ${shouldShowFieldError('email') ? 'error' : ''}`}
                   placeholder="Эл. почта"
                   disabled={isLoading}
                 />
-                {shouldShowFieldError('email', isFormSubmitted, errors, error) && (
+                {shouldShowFieldError('email') && (
                   <span className="error-star">
                     {formData.email ? ' *' : '*'}
                   </span>
@@ -114,17 +152,17 @@ export const LoginPage = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className={`form-input ${shouldShowFieldError('password', isFormSubmitted, errors, error) ? 'error' : ''}`}
+                  className={`form-input ${shouldShowFieldError('password') ? 'error' : ''}`}
                   placeholder="Пароль"
                   disabled={isLoading}
                 />
-                {shouldShowFieldError('password', isFormSubmitted, errors, error) && (
+                {shouldShowFieldError('password') && (
                   <span className="error-star">
                     {formData.password ? ' *' : '*'}
                   </span>
                 )}
               </div>
-              {shouldShowGlobalError(error, isFormSubmitted, hasValidationErrors) && (
+              {shouldShowGlobalError() && (
                 <div className="error-message">
                   Упс! Введенные вами данные некорректны. Введите данные корректно и повторите попытку.
                 </div>
@@ -134,8 +172,8 @@ export const LoginPage = () => {
             <button
               type="button"
               onClick={handleButtonClick}
-              className={`login-button ${isButtonDisabled(isFormSubmitted, hasValidationErrors, isLoading, error) ? 'disabled' : ''}`}
-              disabled={isButtonDisabled(isFormSubmitted, hasValidationErrors, isLoading, error)}
+              className={`login-button ${isButtonDisabled() ? 'disabled' : ''}`}
+              disabled={isButtonDisabled()}
             >
               {isLoading ? 'Вход...' : 'Войти'}
             </button>
