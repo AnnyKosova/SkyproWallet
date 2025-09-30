@@ -1,10 +1,10 @@
 // index.jsx
 import React, { useState, useEffect } from 'react';
 import styles from './style.module.css';
-import { TransactionsAPI } from './api_transactions';
+import { TransactionsAPI } from '../../shared/api/api_transactions';
 import { useAuth } from '@/shared/context/AuthContext';
 
-export const AnalysisExpenses = ({ startDate, endDate }) => {
+export const AnalysisExpenses = ({ startDate, endDate, onToggleView, }) => {
   const [selectedStartDate, setSelectedStartDate] = useState(new Date());
   const [selectedEndDate, setSelectedEndDate] = useState(new Date());
   const [expensesData, setExpensesData] = useState([]);
@@ -148,6 +148,12 @@ export const AnalysisExpenses = ({ startDate, endDate }) => {
     return `${total.toLocaleString('ru-RU')} ₽`;
   };
 
+  const handleToggleButtonClick = () => {
+    if (onToggleView) {
+      onToggleView('calendar');
+    }
+  };
+
   const renderChartColumns = () => {
     // Проверяем авторизацию
     if (!isAuthenticated || !token) {
@@ -203,6 +209,7 @@ export const AnalysisExpenses = ({ startDate, endDate }) => {
   return (
     <div className={styles.expenses_container}>
       <div className={styles.expenses_header}>
+        <div className={styles.expenses_title_mobile}>Анализ расходов</div>
         <div className={styles.total_amount}>{getTotalAmount()}</div>
         <div className={styles.period_display}>{getPeriodDisplay()}</div>
       </div>
@@ -211,7 +218,10 @@ export const AnalysisExpenses = ({ startDate, endDate }) => {
         {renderChartColumns()}
       </div>
       
-      <button className={styles.mobile_toggle_button}>
+      <button 
+        className={styles.mobile_toggle_button}
+        onClick={handleToggleButtonClick}
+      >
         Выбрать период расходов
       </button>
     </div>

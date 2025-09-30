@@ -28,6 +28,27 @@ letter-spacing: 0px;
 text-align: center;
 }
 
+.no_data {
+display: flex;
+flex-direction: row;
+
+color: rgba(153, 153, 153, 1);
+font-size: 16px;
+font-weight: 600;
+line-height: 100%;
+letter-spacing: 0px;
+}
+
+.expenses_title_mobile {
+    margin-bottom: 24px;
+    color: rgba(0, 0, 0, 1);
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 100%;
+    letter-spacing: 0px;
+    text-align: center;
+}
+
 .total_amount {
   font-size: 28px;
   font-weight: 700;
@@ -121,17 +142,26 @@ text-align: center;
 
 .mobile_toggle_button {
   display: block;
-  width: 100%;
-  padding: 16px;
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 16px;
-  transition: background-color 0.2s;
+/* Frame 1511838650 */
+width: 343px;
+height: 39px;
+/* Автолейаут */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+gap: 12;
+padding: 12px;
+border-radius: 6px;
+border: none;
+background-color: rgba(115, 52, 234, 1);
+color: rgba(255, 255, 255, 1);
+
+font-size: 12px;
+font-weight: 600;
+line-height: 100%;
+letter-spacing: 0px;
+text-align: center;
 }
 
 .mobile_toggle_button:hover {
@@ -142,12 +172,19 @@ text-align: center;
   .mobile_toggle_button {
     display: none;
   }
+  .expenses_title_mobile {
+    display: none;
+  }
 }
 
 @media (max-width: 767px) {
+  .expenses_chart {
+    height: 376px;
+    margin-top: 12px;
+  }
   .expenses_container {
-    margin-bottom: 16px;
-    padding: 16px;
+    padding: 24px 16px 31px 16px;
+    box-shadow: none;
   }
   
   .expenses_header h2 {
@@ -156,13 +193,6 @@ text-align: center;
   
   .total_amount {
     font-size: 24px !important;
-  }
-  
-  .expenses_chart {
-    height: 250px;
-    gap: 8px;
-    overflow-x: auto;
-    padding-bottom: 10px;
   }
   
   .chart_column {
@@ -183,4 +213,14 @@ text-align: center;
     font-size: 10px;
     margin-top: 4px;
   }
+}
+
+.mobile_toggle_button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.mobile_toggle_button:disabled:hover {
+  background-color: #cccccc;
 }
