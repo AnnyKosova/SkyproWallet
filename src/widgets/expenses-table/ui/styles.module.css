@@ -58,6 +58,10 @@
     font-size: 12px;
 }
 
+.item__delete {
+    cursor: pointer;
+}
+
 .col5 {
     text-align: end;
 }

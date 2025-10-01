@@ -2,7 +2,7 @@ import { AnalysisPage } from '@/pages/analysis/AnalysisPage';
 import { ExpensesPage } from '@/pages/expenses/ExpensesPage';
 import { LoginPage } from '@/pages/login/LoginPage';
 import { RegisterPage } from '@/pages/register/RegisterPage';
-import { useAuth } from '@/shared/context/AuthContext';
+import { useAuth } from '@/shared/context/auth-ctx/AuthContext';
 import {
   Navigate,
   Route,
@@ -10,6 +10,7 @@ import {
   Routes,
 } from 'react-router-dom';
 import { Layout } from '../layouts';
+import { ExpensesProvider } from '.';
 
 // Компонент для защищенных маршрутов
 const ProtectedRoute = ({ children }) => {
@@ -66,9 +67,9 @@ export function AppRouter() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<Navigate to="/expenses" replace />} />
-          <Route path="expenses" element={<ExpensesPage />} />
-          <Route path="analysis" element={<AnalysisPage />} />
+            <Route index element={<Navigate to="/expenses" replace />} />
+            <Route path="expenses" element={<ExpensesPage />} />
+            <Route path="analysis" element={<AnalysisPage />} />
         </Route>
 
         {/* Редирект на главную для несуществующих маршрутов */}

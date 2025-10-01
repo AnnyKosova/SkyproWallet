@@ -1,11 +1,14 @@
-import { AppRouter } from './router';
-import { AuthProvider } from '@/shared/context/AuthContext';
+import { AppRouter } from './providers/index';
+import { AuthProvider } from './providers/index';
+import { ExpensesProvider } from './providers/index';
 import './styles/index.css';
 
 export function App() {
   return (
     <AuthProvider>
-      <AppRouter />
+      <ExpensesProvider>
+        <AppRouter />
+      </ExpensesProvider>
     </AuthProvider>
   );
 }

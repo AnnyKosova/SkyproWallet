@@ -14,8 +14,6 @@
     padding: 10px;
     border-radius: 6px;
     border: 0.50px solid #999;
-    max-width: 343px;
-    width: 100%;
 }
 
 .form__input:focus {

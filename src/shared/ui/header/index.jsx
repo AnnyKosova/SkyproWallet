@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import cn from 'classnames';
-import { useAuth } from '@/shared/context/AuthContext';
+import { useAuth } from '@/shared/context/auth-ctx/AuthContext';
 
 import logo from '@/shared/assets/images/logo.svg';
 import { locationNow } from '@/shared/lib/location-now';
@@ -53,10 +53,7 @@ export const Header = ({ isMain = false }) => {
 
           <div className={styles.exit}>
             <span className={styles.user__email}>{user?.email}</span>
-            <button 
-              onClick={handleLogout}
-              className={styles.exit__text}
-            >
+            <button onClick={handleLogout} className={styles.exit__text}>
               Выйти
             </button>
           </div>

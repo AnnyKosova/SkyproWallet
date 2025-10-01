@@ -1,34 +1,39 @@
 import { useForm } from 'react-hook-form';
 import cn from 'classnames';
 
+import { useExpensesCtx } from '@/shared/context/expenses-ctx';
 import { FormCheckbox } from '@/shared/ui/checkbox';
 import { FormItem } from '@/shared/ui/input';
-import { category } from '../config';
+import { category, categoryMap } from '../config';
+import { formFields } from '../config';
 
 import styles from './style.module.css';
 
 export function ExpensesForm() {
+  const expensesCtx = useExpensesCtx();
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitSuccessful },
     getFieldState,
     setError,
     reset,
   } = useForm({
-    mode: "onTouched",
-    defaultValues: {
-      description: '',
-      category: [],
-      date: '',
-      sum: '',
-    },
+    mode: 'onTouched',
+    defaultValues: formFields,
   });
 
   const onSubmit = (data) => {
-    console.log('SEND', data);
-    reset();
+    const body = {
+      ...data,
+      category: categoryMap[data.category[0]],
+      date: data.date.replaceAll('.', '-'),
+      sum: Number(data.sum),
+    };
+
+    expensesCtx.createExpense(body).then(() => reset());
   };
+
   const onError = (error) => {
     console.log('ERROR', error);
   };
@@ -41,22 +46,25 @@ export function ExpensesForm() {
           label="Описание"
           id="description"
           placeholder="Введите описание"
+          error={errors.description}
           {...register('description', {
             required: true,
+            minLength: {
+              value: 4,
+              message: 'Описание должно содержать 4 и более символов',
+            },
             maxLength: {
               value: 99,
               message: 'Превышен лимит символов',
             },
           })}
-          error={errors.description}
         />
 
         <div>
           <p
             role="label"
             className={cn(styles.category__label, {
-              [styles['error-star']]:
-                errors?.category?.type === 'validate' ? true : false,
+              [styles['error-star']]: errors?.category?.type === 'validate',
             })}
           >
             Категория
@@ -91,7 +99,8 @@ export function ExpensesForm() {
           placeholder="Введите дату (дд.мм.гггг)"
           {...register('date', {
             required: true,
-            pattern: /\d{2}\.\d{2}\.(\d{2}|\d{4})/,
+            pattern:
+              /^(?:(?:31\.(?:0[13578]|1[02]))|(?:29|30\.(?:0[1,3-9]|1[0-2]))|(?:0[1-9]|1\d|2[0-8])\.(?:0[1-9]|1[0-2]))\.\d{4}$|^(29\.02\.(?:\d{2}(?:0[48]|[2468][048]|[13579][26])|(?:[02468][048]00)))$/,
           })}
           error={errors.date}
         />
@@ -101,16 +110,16 @@ export function ExpensesForm() {
           id="sum"
           type="number"
           placeholder="Введите сумму"
+          error={errors.sum}
           {...register('sum', {
             required: true,
           })}
-          error={errors.sum}
         />
         <input
           className={styles.form__submit}
           type="submit"
           value="Добавить новый расход"
-          disabled={Object.keys(errors).length > 0}
+          disabled={isSubmitSuccessful || Object.keys(errors).length > 0}
         />
       </form>
     </div>
