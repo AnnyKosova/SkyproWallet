@@ -3,6 +3,8 @@ import { getAuthUserToken } from '../local-storage';
 
 const apiUrl = import.meta.env.VITE_URL || '';
 
+if(!apiUrl) throw new Error("Возможно вы забыли создать env.development. Примеры переменных можно посмотреть в файле: env.example");
+
 export const axiosInstance = axios.create({
   baseURL: apiUrl,
   headers: {
