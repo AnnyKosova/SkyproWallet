@@ -58,6 +58,11 @@
     font-size: 12px;
 }
 
+.item__description {
+    overflow-x: scroll;
+    scrollbar-width: none;
+}
+
 .item__delete {
     cursor: pointer;
 }
