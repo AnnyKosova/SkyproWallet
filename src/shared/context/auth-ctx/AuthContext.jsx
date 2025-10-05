@@ -114,10 +114,8 @@ export const AuthProvider = ({ children }) => {
             payload: { user, token },
           });
         })
-
-        .catch(() => {
         .catch((error) => {
-          // console.log("DEBUG: Token verification failed:", error);№
+          // console.log("DEBUG: Token verification failed:", error);
           localStorage.removeItem('token');
           dispatch({ type: AUTH_ACTIONS.LOGOUT });
         });

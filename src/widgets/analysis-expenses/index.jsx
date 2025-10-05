@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './style.module.css';
 import { TransactionsAPI } from './api_transactions';
-import { useAuth } from '@/shared/context/AuthContext';
+import { useAuth } from '@/shared/context/auth-ctx/AuthContext';
 
 export const AnalysisExpenses = ({ startDate, endDate }) => {
   const [selectedStartDate, setSelectedStartDate] = useState(new Date());
