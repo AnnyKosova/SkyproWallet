@@ -9,7 +9,7 @@ import styles from './styles.module.css';
 
 export const Header = ({ isMain = false }) => {
   const { pathname } = useLocation();
-  const { logout, user } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -52,7 +52,6 @@ export const Header = ({ isMain = false }) => {
           </nav>
 
           <div className={styles.exit}>
-            <span className={styles.user__email}>{user?.email}</span>
             <button onClick={handleLogout} className={styles.exit__text}>
               Выйти
             </button>
