@@ -1,10 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/shared/context/AuthContext';
-import { validateLoginForm } from '@/shared/utils/validation';
-import { shouldShowFieldError, shouldShowGlobalError, isButtonDisabled } from '@/shared/utils/formHelpers';
+import { useAuth } from '@/shared/context/auth-ctx/AuthContext';
+import { Header } from '@/shared/ui/header';
 import './LoginPage.css';
-import { Header } from '@/shared/ui/header 2';
 
 export const LoginPage = () => {
   const [formData, setFormData] = useState(() => {
@@ -13,7 +11,15 @@ export const LoginPage = () => {
   });
   const [errors, setErrors] = useState({});
   const [hasValidationErrors, setHasValidationErrors] = useState(false);
-  const { login, isAuthenticated, isLoading, error, clearError, isFormSubmitted, setFormSubmitted } = useAuth();
+  const {
+    login,
+    isAuthenticated,
+    isLoading,
+    error,
+    clearError,
+    isFormSubmitted,
+    setFormSubmitted,
+  } = useAuth();
   const navigate = useNavigate();
 
   // Сохраняем данные формы в localStorage при изменении
@@ -36,19 +42,22 @@ export const LoginPage = () => {
     }
   }, [isAuthenticated, setFormSubmitted]);
 
-  const handleChange = useCallback((e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }));
-    
-    clearError();
-    
-    if (isFormSubmitted) {
-      validateForm();
-    }
-  }, [isFormSubmitted, clearError]);
+  const handleChange = useCallback(
+    (e) => {
+      const { name, value } = e.target;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+
+      clearError();
+
+      if (isFormSubmitted) {
+        validateForm();
+      }
+    },
+    [isFormSubmitted, clearError]
+  );
 
   const validateForm = useCallback(() => {
     const { errors: newErrors, hasErrors } = validateLoginForm(formData);
@@ -58,31 +67,80 @@ export const LoginPage = () => {
   }, [formData]);
 
   // Обработчик клика по кнопке
-  const handleButtonClick = useCallback(async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    setFormSubmitted(true);
-    
-    const isValid = validateForm();
-    
-    if (!isValid) {
-      return;
-    }
+  const handleButtonClick = useCallback(
+    async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
 
-    const success = await login(formData.email, formData.password);
-    
-    if (success) {
-      navigate('/expenses');
-    }
-  }, [formData.email, formData.password, validateForm, login, navigate, setFormSubmitted]);
+      setFormSubmitted(true);
+
+      const isValid = validateForm();
+
+      if (!isValid) {
+        return;
+      }
+
+      const success = await login(formData.email, formData.password);
+
+      if (success) {
+        navigate('/expenses');
+      }
+    },
+    [
+      formData.email,
+      formData.password,
+      validateForm,
+      login,
+      navigate,
+      setFormSubmitted,
+    ]
+  );
+
+  //Ошибка eslint: shouldShowError - не используется
+  // Показываем ошибки только после попытки отправки
+  // const shouldShowError = useCallback(
+  //   (fieldName) => {
+  //     return isFormSubmitted && errors[fieldName];
+  //   },
+  //   [isFormSubmitted, errors]
+  // );
+
+  const shouldShowGlobalError = useCallback(() => {
+    return error || (isFormSubmitted && hasValidationErrors);
+  }, [error, isFormSubmitted, hasValidationErrors]);
+
+  // Показываем ошибки полей при наличии ошибки от API или валидации
+  const shouldShowFieldError = useCallback(
+    (fieldName) => {
+      if (fieldName === 'password') {
+        return (
+          (isFormSubmitted && errors[fieldName]) || (error && isFormSubmitted)
+        );
+      }
+      return isFormSubmitted && errors[fieldName];
+    },
+    [isFormSubmitted, errors, error]
+  );
+
+  // Определяем, должна ли кнопка быть неактивной
+  const isButtonDisabled = useCallback(() => {
+    const hasValidationErrorsResult = isFormSubmitted && hasValidationErrors;
+    const hasApiError = error && isFormSubmitted;
+    const isLoadingResult = isLoading;
+
+    return hasValidationErrorsResult || isLoadingResult || hasApiError;
+  }, [isFormSubmitted, hasValidationErrors, isLoading, error]);
 
   return (
-    <div className={`login-page ${error || (isFormSubmitted && hasValidationErrors) ? 'error' : ''}`}>
+    <div
+      className={`login-page ${error || (isFormSubmitted && hasValidationErrors) ? 'error' : ''}`}
+    >
       <Header />
 
       <div className="login-container">
-        <div className={`login-form-container ${error || (isFormSubmitted && hasValidationErrors) ? 'error' : ''}`}>
+        <div
+          className={`login-form-container ${error || (isFormSubmitted && hasValidationErrors) ? 'error' : ''}`}
+        >
           <h1 className="login-title">Вход</h1>
 
           <div className="login-form">
@@ -126,7 +184,8 @@ export const LoginPage = () => {
               </div>
               {shouldShowGlobalError(error, isFormSubmitted, hasValidationErrors) && (
                 <div className="error-message">
-                  Упс! Введенные вами данные некорректны. Введите данные корректно и повторите попытку.
+                  Упс! Введенные вами данные некорректны. Введите данные
+                  корректно и повторите попытку.
                 </div>
               )}
             </div>

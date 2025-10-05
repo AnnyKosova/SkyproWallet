@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import cn from 'classnames';
-import { useAuth } from '@/shared/context/AuthContext';
+import { useAuth } from '@/shared/context/auth-ctx/AuthContext';
 
 import logo from '@/shared/assets/images/logo.svg';
 import { locationNow } from '@/shared/lib/location-now';
@@ -9,7 +9,7 @@ import styles from './styles.module.css';
 
 export const Header = ({ isMain = false }) => {
   const { pathname } = useLocation();
-  const { logout, user } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -52,11 +52,7 @@ export const Header = ({ isMain = false }) => {
           </nav>
 
           <div className={styles.exit}>
-            
-            <button 
-              onClick={handleLogout}
-              className={styles.exit__text}
-            >
+            <button onClick={handleLogout} className={styles.exit__text}>
               Выйти
             </button>
           </div>

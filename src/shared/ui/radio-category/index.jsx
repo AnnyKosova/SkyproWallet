@@ -1,7 +1,7 @@
 import cn from 'classnames';
 import styles from './styles.module.css';
 
-export function FormCheckbox({
+export function FormRadio({
   label,
   id,
   register,
@@ -10,17 +10,17 @@ export function FormCheckbox({
   ...inputProps
 }) {
   return (
-    <div className={styles.checkbox__wrapper}>
+    <div className={styles.radio__wrapper}>
       <input
         id={id}
-        className={styles.checkbox}
-        type="checkbox"
+        className={styles.radio}
+        type="radio"
         value={value}
         {...register}
         {...inputProps}
       />
-      <label className={cn(styles['checkbox-label'])} htmlFor={id}>
-        <img className={styles['category-image']} src={imgUrl} alt="svg"  />
+      <label className={cn(styles['radio-label'])} htmlFor={id}>
+        <img className={styles['category-image']} src={imgUrl} alt="svg" />
         {label}
       </label>
     </div>

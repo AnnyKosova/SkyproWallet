@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import { Header } from '@/shared/ui/header 2';
+import { Header } from '@/shared/ui/header';
 
 export const Layout = () => {
   return (

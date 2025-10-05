@@ -17,6 +17,12 @@ SkyproWallet - это современное веб-приложение для 
 npm install
 ```
 
+### Создать .env/.env.development
+*см. .env.example
+```bash
+    VITE_URL=address:api
+```
+
 ### Запуск в режиме разработки
 ```bash
 npm run dev

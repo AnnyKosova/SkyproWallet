@@ -1,8 +1,8 @@
-.checkbox {
+.radio {
     display: none;
 }
 
-.checkbox-label {
+.radio-label {
     display: flex;
     gap: 12px;
     padding: 8px 20px;
@@ -13,15 +13,15 @@
     background-color: #f4f5f6;
 }
 
-input[type=checkbox].checkbox:checked ~ label.checkbox-label {
+input[type=radio].radio:checked ~ label.radio-label {
     color: #7334EA;
     background-color: #F1EBFD;
 }
 
-input[type=checkbox].checkbox ~ label.checkbox-label .category-image {
+input[type=radio].radio ~ label.radio-label .category-image {
     filter: brightness(0)
 }
 
-input[type=checkbox].checkbox:checked ~ label.checkbox-label .category-image {
+input[type=radio].radio:checked ~ label.radio-label .category-image {
     filter: brightness(1)
 }

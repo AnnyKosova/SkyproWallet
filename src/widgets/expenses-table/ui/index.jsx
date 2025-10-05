@@ -1,7 +1,25 @@
 import cn from 'classnames';
+import { useEffect } from 'react';
+
+import { useExpensesCtx } from '@/shared/context/expenses-ctx';
+import { getCategoryKey } from '@/shared/lib/get-category-key';
+
 import styles from './styles.module.css';
 
 export function ExpensesTable() {
+  const { expenses, getAllExpenses, deleteExpense } = useExpensesCtx();
+
+  useEffect(() => {
+    getAllExpenses();
+  }, []);
+
+  const onDelete = (e) => {
+    const target = e.target;
+    let id = target.getAttribute('data-id');
+    if (!id) id = target.firstChild.getAttribute('data-id');
+    deleteExpense(id);
+  };
+
   return (
     <div className={styles.table}>
       <h2 className={styles.table__title}>Таблица расходов</h2>
@@ -15,19 +33,28 @@ export function ExpensesTable() {
         <div className={styles.line}></div>
 
         <div className={styles.table__expenses}>
-          {Array(18)
-            .fill(null)
-            .map((_, index) => (
-              <div key={index} className={styles.expenses__item}>
-                <div className={styles.item__description}>Пятерочка</div>
-                <div className={styles.item__category}>Еда</div>
-                <div className={styles.item__date}>03.07.2024</div>
-                <div className={styles.item__sum}>3 500 ₽</div>
-                <div className={cn(styles.item__delete, styles.col5)}>
-                  <img src="/common/bag.svg" alt="Удалить" />
+          {expenses ? (
+            expenses.map((el) => (
+              <div key={el._id} className={styles.expenses__item}>
+                <div className={styles.item__description}>{el.description}</div>
+                <div className={styles.item__category}>
+                  {getCategoryKey(el.category)}
+                </div>
+                <div className={styles.item__date}>
+                  {new Date(el.date).toLocaleDateString('ru-RU')}
+                </div>
+                <div className={styles.item__sum}>{el.sum}</div>
+                <div
+                  className={cn(styles.item__delete, styles.col5)}
+                  onClick={onDelete}
+                >
+                  <img src="/common/bag.svg" alt="Удалить" data-id={el._id} />
                 </div>
               </div>
-            ))}
+            ))
+          ) : (
+            <p>Кажется, трат пока нет! РАДУЙТЕСЬ!</p>
+          )}
         </div>
       </div>
     </div>

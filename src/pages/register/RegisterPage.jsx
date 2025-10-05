@@ -1,5 +1,5 @@
-import { useAuth } from '@/shared/context/AuthContext';
-import { Header } from '@/shared/ui/header 2';
+import { useAuth } from '@/shared/context/auth-ctx/AuthContext';
+import { Header } from '@/shared/ui/header';
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { validateRegisterForm } from '@/shared/utils/validation';
