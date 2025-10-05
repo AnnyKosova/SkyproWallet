@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { validateLoginForm } from '@/shared/utils/validation';
 import { useAuth } from '@/shared/context/auth-ctx/AuthContext';
 import { Header } from '@/shared/ui/header';
 import './LoginPage.css';
@@ -96,7 +97,7 @@ export const LoginPage = () => {
     ]
   );
 
-  //Ошибка eslint: shouldShowError - не используется
+  // Ошибка eslint: shouldShowError - не используется
   // Показываем ошибки только после попытки отправки
   // const shouldShowError = useCallback(
   //   (fieldName) => {
