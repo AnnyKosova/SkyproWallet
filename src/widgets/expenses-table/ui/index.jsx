@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
 import cn from 'classnames';
+import { useEffect } from 'react';
 
 import { useExpensesCtx } from '@/shared/context/expenses-ctx';
+import { getCategoryKey } from '@/shared/lib/get-category-key';
 
 import styles from './styles.module.css';
-import { getCategoryKey } from '../../../shared/lib/get-category-key';
 
 export function ExpensesTable() {
   const { expenses, getAllExpenses, deleteExpense } = useExpensesCtx();
@@ -15,10 +15,8 @@ export function ExpensesTable() {
 
   const onDelete = (e) => {
     const target = e.target;
-    let id = target.getAttribute("data-id");
-    if(!id) {
-       id = target.firstChild.getAttribute("data-id");
-    }
+    let id = target.getAttribute('data-id');
+    if (!id) id = target.firstChild.getAttribute('data-id');
     deleteExpense(id);
   };
 
@@ -39,13 +37,18 @@ export function ExpensesTable() {
             expenses.map((el) => (
               <div key={el._id} className={styles.expenses__item}>
                 <div className={styles.item__description}>{el.description}</div>
-                <div className={styles.item__category}>{getCategoryKey(el.category)}</div>
+                <div className={styles.item__category}>
+                  {getCategoryKey(el.category)}
+                </div>
                 <div className={styles.item__date}>
                   {new Date(el.date).toLocaleDateString('ru-RU')}
                 </div>
                 <div className={styles.item__sum}>{el.sum}</div>
-                <div className={cn(styles.item__delete, styles.col5)} onClick={onDelete}>
-                  <img  src="/common/bag.svg" alt="Удалить" data-id={el._id} />
+                <div
+                  className={cn(styles.item__delete, styles.col5)}
+                  onClick={onDelete}
+                >
+                  <img src="/common/bag.svg" alt="Удалить" data-id={el._id} />
                 </div>
               </div>
             ))

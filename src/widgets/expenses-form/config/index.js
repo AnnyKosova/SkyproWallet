@@ -27,15 +27,11 @@ export const descriptionValidateOpt = {
 };
 
 export const categoryValidateOpt = {
-  validate: (getFieldState, setError) => {
-    const isFilled = getFieldState('category').isDirty;
-    if (!isFilled)
-      setError('category', {
-        type: 'required',
-        message: 'Выберите категорию',
-      });
-    return isFilled;
-  },
+    required: {
+      value: true,
+      message: 'Выберите котегорию',
+    },
+    
 };
 
 export const dateValidateOpt = {

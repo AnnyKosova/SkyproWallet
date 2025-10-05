@@ -1,7 +1,13 @@
 input {
     appearance: none;
-    -webkit-appearance: none;
     -moz-appearance: textfield;
+    margin: 0;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 .form-wrapper {
@@ -63,4 +69,4 @@ input {
 .error-star::after {
     content: " *";
     color: #f25050;
-} 
+}

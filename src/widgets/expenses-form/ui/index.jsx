@@ -23,8 +23,6 @@ export function ExpensesForm() {
     register,
     handleSubmit,
     formState: { errors, isSubmitSuccessful },
-    getFieldState,
-    setError,
     reset,
   } = useForm({
     mode: 'onTouched',
@@ -70,12 +68,7 @@ export function ExpensesForm() {
                 id={`category-${value.name}`}
                 value={value.name}
                 imgUrl={`${value.svgPath}${index}.svg`}
-                {...register('category', {
-                  validate: categoryValidateOpt.validate(
-                    getFieldState,
-                    setError
-                  ),
-                })}
+                {...register('category', categoryValidateOpt)}
               />
             ))}
           </div>

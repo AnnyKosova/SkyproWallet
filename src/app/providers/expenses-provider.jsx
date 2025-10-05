@@ -33,13 +33,15 @@ export const ExpensesProvider = ({ children }) => {
   };
 
   const deleteExpense = (id) => {
-    expensesAPI.deleteExpenseById(id).then((response) =>
+    return expensesAPI.deleteExpenseById(id).then((response) => {
       dispatch({
         type: EXPENSES_ACTIONS.DELETE_EXPENSE,
         payload: response.data.transactions,
-      })
-    );
+      });
+      return response;
+    });
   };
+
   return (
     <ExpensesContext.Provider
       value={{

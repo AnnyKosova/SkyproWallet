@@ -7,4 +7,4 @@ export const useExpensesCtx = () => {
         throw new Error(`useExpensesCtx использутся вне своего контекста`);
     }
     return context;
-}
+};
