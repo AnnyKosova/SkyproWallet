@@ -16,6 +16,8 @@ import {
 } from '../config';
 
 import styles from './style.module.css';
+import { MobileBtn } from '@/shared/ui/mobile-btn';
+import { Link } from 'react-router-dom';
 
 export function ExpensesForm() {
   const expensesCtx = useExpensesCtx();
@@ -40,8 +42,17 @@ export function ExpensesForm() {
   };
 
   return (
-    <div className={styles['form-wrapper']}>
-      <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+    <div className={cn(styles['form-wrapper'])}>
+      <div className={styles['form__title-md-sm']}>
+        <Link to={'/expenses'} className={styles['back-to__expenses_btn']}>
+          Мои расходы
+        </Link>
+      </div>
+      <form
+        className={styles.form}
+        id="expenses-form"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <h2 className={styles.form__title}>Новый расход</h2>
         <FormItem
           label="Описание"
@@ -97,6 +108,13 @@ export function ExpensesForm() {
           disabled={isSubmitSuccessful || Object.keys(errors).length > 0}
         />
       </form>
+      <MobileBtn
+        formId={'expenses-form'}
+        classNames={styles['show__mobile-btn']}
+        type="submit"
+        description={'Добавить новый расход'}
+        disabled={isSubmitSuccessful || Object.keys(errors).length > 0}
+      />
     </div>
   );
 }

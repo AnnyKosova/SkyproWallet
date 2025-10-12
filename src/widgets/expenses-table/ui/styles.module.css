@@ -58,6 +58,7 @@
     font-size: 12px;
 }
 
+.item__sum,
 .item__description {
     overflow-x: scroll;
     scrollbar-width: none;
@@ -69,4 +70,111 @@
 
 .col5 {
     text-align: end;
+}
+
+.title__content-md-sm {
+    display: none;
+}
+
+.show__mobile-btn {
+    display: none;
+}
+
+@media (max-width: 1200px) {
+    .table {
+        border-radius: 0;
+    }
+
+    .table__title {
+        display: none;
+    }
+
+    .table__header,
+    .expenses__item {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .title__content-md-sm {
+        display: flex;
+        padding-top: 24px;
+        padding-left: 16px;
+        padding-right: 16px;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .expenses__btn-md-sm {
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 12px;
+        text-align: start;
+        color: #000;
+        cursor: pointer;
+    }
+
+    .expenses__btn-md-sm::before {
+        content: url("/public/common/add-circle.svg");
+        position: relative;
+        top: 2px;
+        padding-right: 6px;
+    }
+
+    .table__header,
+    .expenses__item {
+        grid-template-columns: repeat(4, 2fr) 20px;
+    }
+
+    .active {
+        display: block;
+    }
+}
+
+@media (max-width: 768px) {
+    .show__mobile-btn {
+        position: sticky;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .item__description,
+    .item__category,
+    .item__date,
+    .item__sum,
+    .table__header-col {
+        font-size: 10px;
+    }
+
+    .item__description,
+    .item__category,
+    .item__date,
+    .item__sum {
+        max-width: 74px;
+    }
+
+    .table__header,
+    .expenses__item {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0;
+    }
+
+    .item1,
+    .item2 {
+        justify-self: start;
+    }
+
+    .item3,
+    .item4 {
+        justify-self: end;
+    }
+
+    .item__delete {
+        display: none;
+    }
+
+    .focused {
+        color: #7334EA;
+        background-color: #F1EBFD;
+    }
 }

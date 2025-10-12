@@ -10,7 +10,8 @@ import {
   Routes,
 } from 'react-router-dom';
 import { Layout } from '../layouts';
-import { ExpensesProvider } from '.';
+import { MobileFormPage } from '@/pages/expenses/mobile/FormPage';
+import { MobileGuardProvider } from './expenses-router/MobileGuard';
 
 // Компонент для защищенных маршрутов
 const ProtectedRoute = ({ children }) => {
@@ -67,9 +68,22 @@ export function AppRouter() {
             </ProtectedRoute>
           }
         >
-            <Route index element={<Navigate to="/expenses" replace />} />
-            <Route path="expenses" element={<ExpensesPage />} />
-            <Route path="analysis" element={<AnalysisPage />} />
+          <Route index element={<Navigate to="/expenses" replace />} />
+          <Route path="expenses" element={<ExpensesPage />} />
+          <Route path="analysis" element={<AnalysisPage />} />
+        </Route>
+
+        <Route
+          path='/'
+          element={
+            <ProtectedRoute>
+              <MobileGuardProvider>
+                <Layout/>
+              </MobileGuardProvider>
+            </ProtectedRoute>
+          }
+        >
+          <Route path="form" element={<MobileFormPage />} />
         </Route>
 
         {/* Редирект на главную для несуществующих маршрутов */}

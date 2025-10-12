@@ -1,0 +1,23 @@
+.mobile-btn {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 87px;
+    width: 100%;
+    box-shadow: 0 -20px 67px -12px rgba(0, 0, 0, 0.13);
+    background: #fff;
+}
+
+.btn {
+    border: none;
+    border-radius: 6px;
+    padding: 12px;
+    height: 39px;
+    background: #7334ea;
+    color: #fff;
+}
+
+.btn:disabled {
+    color: #FFFFFF;
+    background-color: #999999;
+}
