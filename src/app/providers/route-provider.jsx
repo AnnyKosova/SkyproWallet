@@ -18,9 +18,9 @@ const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
 
   // Показываем загрузку только когда проверяем токен
-  if (isLoading) {
-    return <div>Загрузка...</div>;
-  }
+  // if (isLoading) {
+  //   return <div>Загрузка...</div>;
+  // }
 
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
@@ -30,9 +30,9 @@ const PublicRoute = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
 
   // Показываем загрузку только когда проверяем токен
-  if (isLoading) {
-    return <div>Загрузка...</div>;
-  }
+  // if (isLoading) {
+  //   return <div>Загрузка...</div>;
+  // }
 
   return !isAuthenticated ? children : <Navigate to="/expenses" replace />;
 };
