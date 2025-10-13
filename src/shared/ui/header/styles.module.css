@@ -3,7 +3,6 @@
     display: flex;
     justify-content: space-between;
     background: rgba(255, 255, 255, 1);
-    display: flex;
     align-items: center;
     padding-left: var(--center-left);
     padding-right: var(--center-right);
@@ -30,39 +29,9 @@
 }
 
 .exit {
-    cursor: pointer;
-}
-
-.exit__text {
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 14px;
-    color: #000;
-}
-
-.exit__text:hover {
-    color: #7334ea;
-}
-
-/* Мобильная версия */
-@media (max-width: 768px) {
-    .header {
-        height: 64px;
-        background: rgba(244, 245, 246, 1);
-        padding-left: 16px;
-        padding-right: 16px;
-    }
-}
-
-.user__email {
-    font-size: 12px;
-    color: #666;
-    margin-right: 12px;
-}
-
-.exit {
     display: flex;
     align-items: center;
+    cursor: pointer;
 }
 
 .exit__text {
@@ -77,4 +46,22 @@
 
 .exit__text:hover {
     color: #7334ea;
+}
+
+@media (max-width: 1200px) {
+    .header {
+        background: rgba(244, 245, 246, 1);
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .menu {
+        display: none;
+    }
+
+    .exit {
+        display: none;
+    }
 }

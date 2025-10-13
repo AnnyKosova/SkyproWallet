@@ -153,9 +153,8 @@ export const LoginPage = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`form-input ${shouldShowFieldError('email', isFormSubmitted, errors, error) ? 'error' : ''}`}
+                  className={`form-input`}
                   placeholder="Эл. почта"
-                  disabled={isLoading}
                 />
                 {shouldShowFieldError('email', isFormSubmitted, errors, error) && (
                   <span className="error-star">
@@ -173,9 +172,8 @@ export const LoginPage = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className={`form-input ${shouldShowFieldError('password', isFormSubmitted, errors, error) ? 'error' : ''}`}
+                  className={`form-input `}
                   placeholder="Пароль"
-                  disabled={isLoading}
                 />
                 {shouldShowFieldError('password', isFormSubmitted, errors, error) && (
                   <span className="error-star">
@@ -194,8 +192,7 @@ export const LoginPage = () => {
             <button
               type="button"
               onClick={handleButtonClick}
-              className={`login-button ${isButtonDisabled(isFormSubmitted, hasValidationErrors, isLoading, error) ? 'disabled' : ''}`}
-              disabled={isButtonDisabled(isFormSubmitted, hasValidationErrors, isLoading, error)}
+              className={`login-button`}
             >
               {isLoading ? 'Вход...' : 'Войти'}
             </button>

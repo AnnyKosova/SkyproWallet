@@ -1,23 +1,15 @@
 import React from 'react';
 
-import { ExpensesForm } from '@/widgets/expenses-form';
 import { ExpensesTable } from '@/widgets/expenses-table';
-import { useWindowSize } from '@/shared/lib/use-mobile-check';
 
 import styles from './styles.module.css';
-import { MobileTablePage } from './mobile/TablePage';
 
-export const ExpensesPage = () => {
-  const [width, height] = useWindowSize();
-
-  return width <= 1200 ? (
-    <MobileTablePage />
-  ) : (
+export const MobileTablePage = () => {
+  return (
     <div className={styles.expenses__page}>
       <h1 className={styles.expenses__title}>Мои расходы</h1>
       <div className={styles.expenses__content}>
         <ExpensesTable />
-        <ExpensesForm />
       </div>
     </div>
   );

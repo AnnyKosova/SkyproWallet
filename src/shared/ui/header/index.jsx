@@ -1,11 +1,12 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import cn from 'classnames';
 import { useAuth } from '@/shared/context/auth-ctx/AuthContext';
+import cn from 'classnames';
 
 import logo from '@/shared/assets/images/logo.svg';
 import { locationNow } from '@/shared/lib/location-now';
 
 import styles from './styles.module.css';
+import { MobileNav } from './mobile-header/ui';
 
 export const Header = ({ isMain = false }) => {
   const { pathname } = useLocation();
@@ -56,6 +57,7 @@ export const Header = ({ isMain = false }) => {
               Выйти
             </button>
           </div>
+          <MobileNav />
         </>
       ) : null}
     </header>
