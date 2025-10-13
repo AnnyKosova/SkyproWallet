@@ -6,6 +6,7 @@ export const MobileBtn = ({
   type = 'button',
   description = 'Mobile Btn',
   formId,
+  handler,
   disabled = false
 }) => {
   return (
@@ -15,6 +16,7 @@ export const MobileBtn = ({
           className={styles.btn}
           value={description}
           type={type}
+          onClick={handler}
           disabled={disabled}
         />
     </div>

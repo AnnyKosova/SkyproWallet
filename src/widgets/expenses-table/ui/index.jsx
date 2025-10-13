@@ -92,10 +92,10 @@ export function ExpensesTable() {
         </div>
       </div>
       <MobileBtn
+        handler={() => onDeleteMobile(focusedExpenseId)}
         classNames={styles['show__mobile-btn']}
         type="submit"
         description={'Удалить расход'}
-        handler={() => onDeleteMobile(focusedExpenseId)}
       />
     </div>
   );
